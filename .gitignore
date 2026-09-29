@@ -6,3 +6,10 @@
 **/*.elf
 **/*.map
 **/*.img
+
+# AI chat logs (submitted via Gradescope, never tracked)
+chatlogs-hw1/
+
+# HW submission files (uploaded to Gradescope, not tracked)
+/metadata.txt
+/report.pdf
