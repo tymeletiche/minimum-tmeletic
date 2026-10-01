@@ -1,0 +1,24 @@
+# a command typed slowly arrives across several interrupts
+image = "../../image/build/minimum.img"
+boot_rom = "../../bootloader/bootloader.bin"
+max_ticks = 1000000
+
+[[inputs]]
+at_tick = 200000
+uart = 0
+data = "ec"
+
+[[inputs]]
+at_tick = 400000
+uart = 0
+data = "ho sl"
+
+[[inputs]]
+at_tick = 600000
+uart = 0
+data = "ow\n"
+
+[assert]
+uart0_contains = "hello world\nmsh> slow\nmsh> "
+execution_lifecycle = "paused"
+shutdown_lifecycle = "stopped"

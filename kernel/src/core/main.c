@@ -1,7 +1,9 @@
 #include "minemu/boot.h"
 #include "minemu/trap.h"
 #include "minemu/trace.h"
+#include "minemu/irq.h"
 #include "minimum/kprintf.h"
+#include "minimum/msh.h"
 #include "minimum/uart.h"
 
 void minemu_kernel_main(const struct minemu_boot_info *boot_info) {
@@ -21,5 +23,14 @@ void minemu_kernel_main(const struct minemu_boot_info *boot_info) {
     uart_init();
     kprintf("hello world\n");
 
-    minemu_fail_stop();
+    /*
+     * Interrupt bring-up, innermost first: the handler table and UART RX
+     * enable (irq_register also unmasks UART0 in the interrupt controller),
+     * and only then the CPU's IRQ mask. Unmasking the CPU first could take
+     * an interrupt before its handler exists.
+     */
+    uart_enable_rx_interrupts();
+    minemu_irq_enable();
+
+    msh_run();
 }

@@ -1,0 +1,14 @@
+# 20-byte line runs; 21-byte line is discarded silently; the shell recovers
+image = "../../image/build/minimum.img"
+boot_rom = "../../bootloader/bootloader.bin"
+max_ticks = 1000000
+
+[[inputs]]
+at_tick = 300000
+uart = 0
+data = "echo 123456789012345\necho 1234567890123456\necho ok\n"
+
+[assert]
+uart0_contains = "hello world\nmsh> 123456789012345\nmsh> msh> ok\nmsh> "
+execution_lifecycle = "paused"
+shutdown_lifecycle = "stopped"

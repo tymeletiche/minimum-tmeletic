@@ -1,0 +1,14 @@
+# once a line overflows, backspaces cannot rescue it; the next line works
+image = "../../image/build/minimum.img"
+boot_rom = "../../bootloader/bootloader.bin"
+max_ticks = 1000000
+
+[[inputs]]
+at_tick = 300000
+uart = 0
+data = "echo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\u0008\necho ok\n"
+
+[assert]
+uart0_contains = "hello world\nmsh> msh> ok\nmsh> "
+execution_lifecycle = "paused"
+shutdown_lifecycle = "stopped"

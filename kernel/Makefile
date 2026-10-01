@@ -10,7 +10,10 @@ RUNTIME := $(BUILD)/libminemu_kernel.a
 CORE_OBJECTS := \
 	$(BUILD)/core/main.o \
 	$(BUILD)/core/uart.o \
-	$(BUILD)/core/kprintf.o
+	$(BUILD)/core/kprintf.o \
+	$(BUILD)/core/interrupts.o \
+	$(BUILD)/core/msh.o \
+	$(BUILD)/core/irq.o
 RUNTIME_OBJECTS := \
 	$(BUILD)/runtime/block.o \
 	$(BUILD)/runtime/exception.o \

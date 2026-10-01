@@ -1,0 +1,14 @@
+# 320 bytes at once overflow the 256-byte ring; flow control must lose nothing
+image = "../../image/build/minimum.img"
+boot_rom = "../../bootloader/bootloader.bin"
+max_ticks = 4000000
+
+[[inputs]]
+at_tick = 300000
+uart = 0
+data = "echo 00\necho 01\necho 02\necho 03\necho 04\necho 05\necho 06\necho 07\necho 08\necho 09\necho 10\necho 11\necho 12\necho 13\necho 14\necho 15\necho 16\necho 17\necho 18\necho 19\necho 20\necho 21\necho 22\necho 23\necho 24\necho 25\necho 26\necho 27\necho 28\necho 29\necho 30\necho 31\necho 32\necho 33\necho 34\necho 35\necho 36\necho 37\necho 38\necho 39\n"
+
+[assert]
+uart0_contains = "hello world\nmsh> 00\nmsh> 01\nmsh> 02\nmsh> 03\nmsh> 04\nmsh> 05\nmsh> 06\nmsh> 07\nmsh> 08\nmsh> 09\nmsh> 10\nmsh> 11\nmsh> 12\nmsh> 13\nmsh> 14\nmsh> 15\nmsh> 16\nmsh> 17\nmsh> 18\nmsh> 19\nmsh> 20\nmsh> 21\nmsh> 22\nmsh> 23\nmsh> 24\nmsh> 25\nmsh> 26\nmsh> 27\nmsh> 28\nmsh> 29\nmsh> 30\nmsh> 31\nmsh> 32\nmsh> 33\nmsh> 34\nmsh> 35\nmsh> 36\nmsh> 37\nmsh> 38\nmsh> 39\nmsh> "
+execution_lifecycle = "paused"
+shutdown_lifecycle = "stopped"
