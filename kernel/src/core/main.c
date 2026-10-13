@@ -3,7 +3,7 @@
 #include "minemu/trace.h"
 #include "minemu/irq.h"
 #include "minimum/kprintf.h"
-#include "minimum/msh.h"
+#include "minimum/loader.h"
 #include "minimum/uart.h"
 
 void minemu_kernel_main(const struct minemu_boot_info *boot_info) {
@@ -18,10 +18,8 @@ void minemu_kernel_main(const struct minemu_boot_info *boot_info) {
         minemu_trace_event(UINT32_C(0xb007bad0));
         minemu_fail_stop();
     }
-    minemu_trace_event(1);
 
     uart_init();
-    kprintf("hello world\n");
 
     /*
      * Interrupt bring-up, innermost first: the handler table and UART RX
@@ -32,5 +30,18 @@ void minemu_kernel_main(const struct minemu_boot_info *boot_info) {
     uart_enable_rx_interrupts();
     minemu_irq_enable();
 
-    msh_run();
+    /*
+     * HW2: msh now lives in user space. Map the image, load the
+     * "minimum-user" module into its own address space, and drop to USR.
+     * From here on the kernel only runs on SVC (syscall), IRQ, and abort
+     * entries.
+     */
+    uint32_t entry;
+    if (!loader_map_system_rom(boot_info) ||
+        !loader_load_module(boot_info, "minimum-user", &entry)) {
+        kprintf("failed to load minimum-user\n");
+        minemu_trace_event(UINT32_C(0xb007bad1));
+        minemu_fail_stop();
+    }
+    loader_enter_user(entry, USER_STACK_TOP);
 }

@@ -134,3 +134,39 @@ char uart_getc(void)
         irq_restore(saved);
     }
 }
+
+/*
+ * HW2: non-blocking drain of the RX ring for the uart_read ioctl.
+ * Called from the SVC handler, where the CPU entered with IRQs masked, so
+ * the IRQ producer can't run mid-copy; irq_save/restore keeps it correct if
+ * someone calls it with IRQs enabled.
+ */
+size_t uart_read_available(char *dst, size_t n)
+{
+    uint32_t saved = irq_save();
+    size_t copied = 0;
+    while (copied < n && rx_count() != 0)
+    {
+        dst[copied] = (char)rx_buffer[rx_tail & RX_BUFFER_MASK];
+        rx_tail = rx_tail + 1u;
+        copied = copied + 1u;
+    }
+    if (copied != 0)
+    {
+        CONSOLE->control = MINEMU_UART_CONTROL_RX_IRQ_ENABLE; /* room again */
+    }
+    irq_restore(saved);
+    return copied;
+}
+
+/* HW2: polled TX on UART1 (the diagnostic channel, fd MINEMU_FD_UART_DIAG). */
+void uart1_write(const char *buf, size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {
+        while ((MINEMU_UART1->status & MINEMU_UART_STATUS_TX_READY) == 0)
+        {
+        }
+        MINEMU_UART1->tx_data = (uint8_t)buf[i];
+    }
+}

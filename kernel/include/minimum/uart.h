@@ -40,4 +40,10 @@ void uart_write(const char *buf, size_t len);
  */
 char uart_getc(void);
 
+/* HW2: copy up to n buffered RX bytes into dst without blocking; returns count. */
+size_t uart_read_available(char *dst, size_t n);
+
+/* HW2: polled write to UART1 (diagnostic channel). */
+void uart1_write(const char *buf, size_t len);
+
 #endif
