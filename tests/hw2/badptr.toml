@@ -1,0 +1,12 @@
+image = "fixtures/badptr/build/hw2-badptr.img"
+boot_rom = "../../bootloader/bootloader.bin"
+max_ticks = 1500000
+
+[assert]
+uart0_contains = "ok\n"
+execution_lifecycle = "paused"
+shutdown_lifecycle = "stopped"
+mmu_enabled = true
+cpu_mode = "user"
+# 10 rejected calls (-1), RNG state untouched (default seed), 0-length ok, 3 bytes written
+trace_values = [0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x4d454d55, 0, 3]

@@ -145,6 +145,18 @@ size_t uart_read_available(char *dst, size_t n)
 {
     uint32_t saved = irq_save();
     size_t copied = 0;
+
+    /*
+     * Also pull anything still sitting in the hardware FIFO, exactly as the
+     * IRQ handler would. minemu only delivers IRQs at the boundary of an
+     * instruction batch, and every svc ends a batch while the CPU is in SVC
+     * mode with IRQs masked; a user program that loops on uart_read can
+     * therefore starve the RX interrupt indefinitely. Draining here (IRQs
+     * are masked, so the ring has a single writer) makes uart_read return
+     * "all data available" whether or not the IRQ has run yet.
+     */
+    uart_rx_interrupt();
+
     while (copied < n && rx_count() != 0)
     {
         dst[copied] = (char)rx_buffer[rx_tail & RX_BUFFER_MASK];
